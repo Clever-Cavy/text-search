@@ -9,7 +9,7 @@ class HttpServer(val configName: String) extends DocumentRoutes with ErrorHandle
 
   lazy val routes: Route = documentRoutes
 
-  Http().bindAndHandle(routes, "localhost", config.getInt("http.server.port")).onComplete {
+  Http().bindAndHandle(routes, config.getString("http.server.interface"), config.getInt("http.server.port")).onComplete {
     case Success(bound) =>
       logger.info(s"Server online at http://${bound.localAddress.getHostString}:${bound.localAddress.getPort}/")
     case Failure(e) =>
