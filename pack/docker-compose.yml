@@ -4,13 +4,13 @@ services:
     image: textsearch-server:latest
     build:
       context: .
+    links:
+      - worker1
+      - worker2
     ports:
       - "9001:9001"
       - "2552:2552"
-    depends_on:
-      - worker1
-      - worker2
-    entrypoint: sh bin/textsearch-server master
+    entrypoint: sh bin/textsearch-server master -Dmaster.workers.0="akka.tcp://textsearch@worker1:2553/user/worker" -Dmaster.workers.1="akka.tcp://textsearch@worker2:2554/user/worker"  -Dmaster.akka.remote.netty.tcp.hostname="master"
 
   worker1:
     image: textsearch-server:latest
@@ -19,7 +19,7 @@ services:
     ports:
       - "9002:9002"
       - "2553:2553"
-    entrypoint: sh bin/textsearch-server worker1
+    entrypoint: sh bin/textsearch-server worker1 -Dworker1.akka.remote.netty.tcp.hostname="worker1"
 
   worker2:
     image: textsearch-server:latest
@@ -28,4 +28,4 @@ services:
     ports:
       - "9003:9003"
       - "2554:2554"
-    entrypoint: sh bin/textsearch-server worker2
+    entrypoint: sh bin/textsearch-server worker2 -Dworker2.akka.remote.netty.tcp.hostname="worker2"
