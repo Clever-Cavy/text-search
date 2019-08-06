@@ -98,7 +98,7 @@ Response body:
 
 ##### POST /storage/documents
 
-Example: http://localhost:9001/storage/documents/key1
+Example: http://localhost:9001/storage/documents
 
     {
         "key": "key1",
