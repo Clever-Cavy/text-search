@@ -24,6 +24,10 @@ See application.conf and pack/docker-compose.yml
                                                                 |            |
                                                                 +------------+
  
+# To build
+```
+    sbt pack
+```
 
 
 # To run server use binaries:
