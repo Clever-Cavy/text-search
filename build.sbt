@@ -14,8 +14,8 @@ lazy val testtask = (project in file(".")).
     scalaVersion := "2.11.8",
 
     libraryDependencies ++= Seq(
-      "com.typesafe.scala-logging" %% "scala-logging" % "3.8.0",
-      "org.slf4j" % "slf4j-simple" % "1.7.26",
+      "com.typesafe.scala-logging" %% "scala-logging" % "3.9.0",
+      "ch.qos.logback" % "logback-classic" % "1.2.3",
 
       "com.typesafe.akka" %% "akka-http"            % versions.AkkaHttp,
       "com.typesafe.akka" %% "akka-stream"          % versions.Akka,

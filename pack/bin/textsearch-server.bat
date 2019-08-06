@@ -90,7 +90,7 @@ SET PSEP=;
 
 @REM Start Java program
 :runm2
-SET CMDLINE=%JAVA_EXE%  %JAVA_OPTS% -cp "%PROG_HOME%\lib\*;"  -Dprog.home="%PROG_HOME%" -Dprog.version="0.0.1" -Dprog.revision="db26d542559f843d3f6b7912907a2b792ba58171" task.textsearch.server.ServerRunner %CMD_LINE_ARGS%
+SET CMDLINE=%JAVA_EXE%  %JAVA_OPTS% -cp "%PROG_HOME%\lib\*;"  -Dprog.home="%PROG_HOME%" -Dprog.version="0.0.1" -Dprog.revision="00b87bdb8eb8732e45d825fbfef92148f4288f3f" task.textsearch.server.ServerRunner %CMD_LINE_ARGS%
 %CMDLINE%
 if ERRORLEVEL 1 goto error
 goto end

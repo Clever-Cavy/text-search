@@ -11,7 +11,7 @@ class DocumentRegistryActor extends Actor with LazyLogging {
 
   def receive: Receive = {
     case PutDocument(document) =>
-      logger.debug(s"put ${document.key}")
+      logger.debug(s"PutDocument ${document.key}")
       if (storage.exists(document.key)) {
         sender() ! DocumentAdded(s"Document with key ${document.key} already exists. Updating documents is not supported. Use another key")
       } else {
@@ -20,11 +20,11 @@ class DocumentRegistryActor extends Actor with LazyLogging {
       }
 
     case GetDocument(key) =>
-      logger.debug(s"get $key")
+      logger.debug(s"GetDocument $key")
       sender() ! storage.get(key)
 
     case Search(tokens) =>
-      logger.debug(s"search $tokens")
+      logger.debug(s"Search $tokens")
       sender() ! SearchResult(storage.search(tokens))
   }
 }
