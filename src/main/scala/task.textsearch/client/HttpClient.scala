@@ -5,37 +5,47 @@ import java.net.URLEncoder
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.client.RequestBuilding.{Get, Post}
 import akka.http.scaladsl.model.HttpRequest
+import akka.http.scaladsl.unmarshalling.Unmarshal
 import com.typesafe.scalalogging.LazyLogging
-import task.textsearch.model.{Document, JsonSupport}
+import task.textsearch.api.{Document, JsonSupport}
 
-import scala.util.{Failure, Success}
+import scala.concurrent.Future
+import scala.util.{Failure, Success, Try}
 
 class HttpClient extends AkkaConfig with LazyLogging with JsonSupport {
-  private val storageHost = config.getString("http.endpoint")
-  logger.info(s"Connecting to $storageHost")
-
-  def get(key: String) = {
-
-    val request = Get(uri = s"$storageHost/storage/documents?key=${encode(key)}")
-    send(request)
+  private lazy val storageHost = {
+    val host = config.getString("http.endpoint")
+    logger.info(s"Connecting to $host")
+    host
   }
 
-  def put(key: String, document: String) = {
-    val request = Post(uri = s"$storageHost/storage/documents", Document(key, document))
-    send(request)
+  def get(key: String): Future[String] = {
+    send(
+      Try(Get(uri = s"$storageHost/storage/documents/${encode(key)}"))
+    )
   }
 
-  def search(tokens: String) = {
-    val request = Get(uri = s"$storageHost/storage/search?tokens=${encode(tokens)}")
-    send(request)
+  def put(key: String, document: String): Future[String] = {
+    send(
+      Try(Post(uri = s"$storageHost/storage/documents", Document(key, document)))
+    )
+  }
+
+  def search(tokens: String): Future[String] = {
+    send(
+      Try(Get(uri = s"$storageHost/storage/search?tokens=${encode(tokens)}"))
+    )
   }
 
   private def encode(str: String) = URLEncoder.encode(str, "UTF-8")
 
-  private def send(request: HttpRequest): Unit = {
-    Http().singleRequest(request).onComplete {
-      case Success(result) => println(result.entity.toString)
-      case Failure(e) => logger.error("something wrong", e)
+  private def send(request: Try[HttpRequest]): Future[String] = {
+    request match {
+      case Success(request) =>
+        Http().singleRequest(request).flatMap(response => Unmarshal(response.entity).to[String])
+      case Failure(exception) =>
+        Future.failed(exception)
     }
+
   }
 }

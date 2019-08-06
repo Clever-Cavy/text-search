@@ -1,4 +1,3 @@
-
 enablePlugins(PackPlugin)
 
 val versions = new {
@@ -25,10 +24,13 @@ lazy val testtask = (project in file(".")).
 
       "com.typesafe.akka" %% "akka-http-testkit"    % versions.AkkaHttp % Test,
       "com.typesafe.akka" %% "akka-testkit"         % versions.Akka     % Test,
-      "org.scalatest"     %% "scalatest" % "3.0.8" % "test"
+      "org.scalatest"     %% "scalatest"            % "3.0.8"           % Test
     ),
 
     javaOptions ++= Seq("-Xms512M", "-Xmx2048M", "-XX:MaxPermSize=2048M", "-XX:+CMSClassUnloadingEnabled"),
+
+    javaOptions in Test += s"-Dconfig.file=${sourceDirectory.value}/test/resources/application-test.conf",
+    fork in Test := true,
 
     packMain := Map(
       "textsearch-server" -> "task.textsearch.server.ServerRunner",
