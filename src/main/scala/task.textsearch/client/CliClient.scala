@@ -26,21 +26,25 @@ class CliClient(client: HttpClient) extends LazyLogging {
   }
 
   def prompt(): Unit = {
-    execute(readLine()).onComplete {
-      case Success(result) if result == "!exit" =>
-        System.exit(0)
-      case Success(result) =>
-        println(result)
-        prompt()
-      case Failure(e) =>
-        logger.error("something went wrong", e)
-        prompt()
+    readLine() match {
+      case None => System.exit(0)
+      case Some(command) =>
+        execute(command).onComplete {
+          case Success(result) if result == "!exit" =>
+            System.exit(0)
+          case Success(result) =>
+            println(result)
+            prompt()
+          case Failure(e) =>
+            logger.error("something went wrong", e)
+            prompt()
+        }
     }
   }
 
 
-  def readLine(): String = {
-    scala.io.StdIn.readLine("> ")
+  def readLine(): Option[String] = {
+    Option(scala.io.StdIn.readLine("> "))
   }
 
   def execute(command: String): Future[String] = {
